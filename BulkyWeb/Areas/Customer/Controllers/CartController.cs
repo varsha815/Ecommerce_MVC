@@ -126,7 +126,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
                 {
                     SuccessUrl = domain+$"customer/cart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}",
                     CancelUrl= domain+"customer/cart/index",
-                    LineItems = new List<Stripe.Checkout.SessionLineItemOptions>(),
+                    LineItems = new List<SessionLineItemOptions>(),
     
                     Mode = "payment",
                 };
@@ -135,7 +135,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
                 {
                     var sessionLineItem = new SessionLineItemOptions
                     {
-                        PriceData = new SessionLineItemPriceDataOptions()
+                        PriceData = new SessionLineItemPriceDataOptions
                         {
                             UnitAmount = (long)(item.Price * 100),//$20.50 => 2050
                             Currency = "usd",
@@ -166,12 +166,12 @@ namespace BulkyWeb.Areas.Customer.Controllers
         {
             OrderHeader orderHeader=_unitOfWork.OrderHeader.Get(u=>u.Id== id,includeProperties:"ApplicationUser");
             if (orderHeader.PaymentStatus != SD.PaymentStatusDelayedPayment)
-            {
+            {//this is an order by customer
                 var service=new SessionService();
                 Session session = service.Get(orderHeader.SessionId);
                 if (session.PaymentStatus.ToLower() == "paid")
                 {
-                    _unitOfWork.OrderHeader.UpdateStripePaymentID(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
+                    _unitOfWork.OrderHeader.UpdateStripePaymentID(id, session.Id, session.PaymentIntentId);
                     _unitOfWork.OrderHeader.UpdateStatus(id, SD.StatusApproved, SD.PaymentStatusApproved);
                     _unitOfWork.Save();
                 }
