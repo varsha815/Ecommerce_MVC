@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace BulkyWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[Authorize(Roles = SD.Role_Admin)]
+    [Authorize(Roles = SD.Role_Admin)]
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -182,7 +182,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
             return RedirectToAction("Index", "Product");
         }*/
 
-        #region API CALLS
+#region API CALLS
         [HttpGet]
         public IActionResult GetAll() {
             List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
@@ -206,6 +206,6 @@ namespace BulkyWeb.Areas.Admin.Controllers
             _unitOfWork.Save();
             return Json(new { success = true, message = "Delete Successful" });
         }
-        #endregion
+        #endregion        
     }
 }
