@@ -1,4 +1,5 @@
-﻿using Bulky.DataAccess.Data;
+﻿
+using Bulky.DataAccess.Data;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
 using Bulky.Models.ViewModels;
@@ -31,7 +32,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
         public IActionResult RoleManagment(string userId)
         {
 
-            RoleManagmentVM RoleVM = new RoleManagmentVM()
+            RoleManagementVM RoleVM = new RoleManagementVM()
             {
                 ApplicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId, includeProperties: "Company"),
                 RoleList = _roleManager.Roles.Select(i => new SelectListItem
@@ -46,13 +47,12 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 }),
             };
 
-            RoleVM.ApplicationUser.Role = _userManager.GetRolesAsync(_unitOfWork.ApplicationUser.Get(u => u.Id == userId))
-                    .GetAwaiter().GetResult().FirstOrDefault();
+            RoleVM.ApplicationUser.Role = _userManager.GetRolesAsync(_unitOfWork.ApplicationUser.Get(u => u.Id == userId)).GetAwaiter().GetResult().FirstOrDefault();
             return View(RoleVM);
         }
 
         [HttpPost]
-        public IActionResult RoleManagment(RoleManagmentVM roleManagmentVM)
+        public IActionResult RoleManagment(RoleManagementVM roleManagmentVM)
         {
 
             string oldRole = _userManager.GetRolesAsync(_unitOfWork.ApplicationUser.Get(u => u.Id == roleManagmentVM.ApplicationUser.Id))
